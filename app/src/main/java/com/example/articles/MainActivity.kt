@@ -1,7 +1,9 @@
 package com.example.articles
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import com.example.articles.authorization.MainApi
 import com.example.articles.databinding.ActivityMainBinding
 import com.example.articles.user.AuthRequest
@@ -21,41 +23,53 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.level = HttpLoggingInterceptor.Level.BODY
+        val clickListener = buttons()
+        binding.BTNauth.setOnClickListener(clickListener::onClick)
 
-        val client = OkHttpClient.Builder().
-                addInterceptor(interceptor).
-                build()
+      val interceptor = HttpLoggingInterceptor()
+      interceptor.level = HttpLoggingInterceptor.Level.BODY
 
-        val retrofit =  Retrofit.Builder().
-            baseUrl("https://dummyjson.com").client(client).
-            addConverterFactory(GsonConverterFactory.create()).build()
-        val mainApi = retrofit.create(MainApi::class.java)
+      val client = OkHttpClient.Builder().
+      addInterceptor(interceptor).
+      build()
 
-            binding.BTNauth.setOnClickListener {
-                if(binding.authLogin.text.isNotEmpty() or (binding.authPassword.text.isNotEmpty())) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val user = mainApi.auth(
-                        AuthRequest(
-                            binding.authLogin.text.toString(),
-                            binding.authPassword.text.toString()
-                        )
-                    )
-                    runOnUiThread {
-                        binding.apply {
-                            Picasso.get().load(user.image).into(binding.imageView2)
-                            firstname.text = user.firstName
-                            lastname.text = user.lastName
-                        }
+      val retrofit =  Retrofit.Builder().
+      baseUrl("https://dummyjson.com").client(client).
+      addConverterFactory(GsonConverterFactory.create()).build()
+      val mainApi = retrofit.create(MainApi::class.java)
 
-                    }
+      binding.BTNauth.setOnClickListener {
+          if(binding.authLogin.text.isNotEmpty() or (binding.authPassword.text.isNotEmpty())) {
+              CoroutineScope(Dispatchers.IO).launch {
+                  val user = mainApi.auth(
+                      AuthRequest(
+                          binding.authLogin.text.toString(),
+                          binding.authPassword.text.toString()
+                      )
+                  )
+                  runOnUiThread {
+                      binding.apply {
+                          Picasso.get().load(user.image).into(binding.imageView2)
+                          firstname.text = user.firstName
+                          lastname.text = user.lastName
+                      }
+                  }
+              }
+          }
+          else binding.firstname.text = resources.getString(R.string.Enter)
+      }
 
-                }
-            }
-                else binding.firstname.text = "Enter login and password"
+        binding.BTNreg.setOnClickListener {
+            val intent = Intent(this, registration::class.java)
+            startActivity(intent)
         }
 
 
+
+
     }
+
+
 }
+
+

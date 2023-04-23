@@ -4,4 +4,8 @@
     <string name="login">Login</string>
     <string name="Hintlogin">login</string>
     <string name="Hintpassword">password</string>
+    <string name="Enter">Enter login and password</string>
+    <string name="firstname">Enter you name</string>
+    <string name="surname">Enter you surname</string>
+    <string name="mail">Enter you mail</string>
 </resources>
